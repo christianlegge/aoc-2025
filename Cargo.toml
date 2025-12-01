@@ -1,0 +1,15 @@
+[package]
+name = "aoc-2025"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.100"
+either = "1.9.0"
+hashbrown = "0.14.3"
+itertools = "0.14.0"
+num = "0.4.1"
+regex = "1.10.2"
+seq-macro = "0.3.6"
