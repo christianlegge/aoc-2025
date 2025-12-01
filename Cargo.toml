@@ -13,3 +13,12 @@ itertools = "0.14.0"
 num = "0.4.1"
 regex = "1.10.2"
 seq-macro = "0.3.6"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+enum_glob_use = "deny"
+pedantic = "deny"
+nursery = "deny"
+unwrap_used = "deny"

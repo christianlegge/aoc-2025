@@ -1,11 +1,7 @@
-pub fn solve(data: String) {
-    println!("Text input: {}", data);
-}
+use anyhow::Error;
 
-pub fn solve2(data: String) {
-    println!("Text input: {}", data);
-}
-
-pub fn solve3(data: String) {
-    println!("Text input: {}", data);
+#[allow(clippy::unnecessary_wraps)]
+pub fn solve(data: &str) -> Result<(String, String), Error> {
+    println!("Text input: {data}");
+    Ok(("Unimplemented".to_string(), "Unimplemented".to_string()))
 }

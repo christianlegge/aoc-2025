@@ -1,47 +1,35 @@
 mod puzzles;
 
-use crate::puzzles::*;
 use seq_macro::seq;
 
+#[allow(clippy::cognitive_complexity)]
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
-    match args.len() {
-        1 => {
-            println!("No arguments provided");
-        }
-        _ => {
-            let arg = args[1].as_str();
-            let data = std::fs::read_to_string(format!("data/aoc_2025_{}", arg));
-            // let data2 =
-            //     std::fs::read_to_string(format!("data/everybody_codes_e2025_{}_p2.txt", arg));
-            // let data3 =
-            //     std::fs::read_to_string(format!("data/everybody_codes_e2025_{}_p3.txt", arg));
-            seq!(N in 1..=20 {
-                match arg {
-                #(
-                stringify!(day~N) => {
-                    match data {
-                        Ok(data) => {
-                            day~N::solve(data.clone());
+    if args.len() == 1 {
+        println!("No arguments provided");
+    } else {
+        let arg = args[1].as_str();
+        let data = std::fs::read_to_string(format!("data/aoc_2025_{arg}"));
+        seq!(N in 1..=12 {
+            match arg {
+            #(
+            stringify!(day~N) => {
+                match data {
+                    Ok(data) => {
+                        match crate::puzzles::day~N::solve(&data) {
+                        Ok((s1, s2)) => {
+                            println!("Part 1 solution: {s1}");
+                            println!("Part 2 solution: {s2}");
                         }
-                        Err(err) => println!("Error reading data 1: {}", err),
-                    };
-                    // println!("============== PART 2 ==============");
-                    // match data {
-                    //     Ok(data) => day~N::solve2(data),
-                    //     Err(err) => println!("Error reading data 2: {}", err),
-                    // };
-                    // println!("============== PART 3 ==============");
-                    // match data3 {
-                    //     Ok(data) => day~N::solve3(data),
-                    //     Err(err) => println!("Error reading data 3: {}", err),
-                    // };
+                        Err(e) => println!("Error solving puzzle: {e}")
+                    }
+                    }
+                    Err(err) => println!("Error reading data 1: {err}"),
                 }
-                )*
-                    _ => panic!("Invalid argument {}", arg),
-                }
-
-            })
-        }
+            }
+            )*
+                _ => panic!("Invalid argument {arg}")
+            }
+        })
     }
 }

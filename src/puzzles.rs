@@ -1,5 +1,5 @@
 use seq_macro::seq;
 
-seq!(N in 1..=20 {
+seq!(N in 1..=12 {
     pub mod day~N;
 });
