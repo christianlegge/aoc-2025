@@ -3,48 +3,33 @@ use std::str::FromStr;
 struct Dial {
     position: i32,
     max: i32,
-    zeroes: i32,
 }
 
 impl Dial {
     fn make_move(&mut self, m: &Move) {
-        match *m {
-            Move::Left(i) => {
-                for _ in 0..i {
-                    self.position -= 1;
-                    if self.position == 0 {
-                        self.zeroes += 1;
-                    }
-                    if self.position == -1 {
-                        self.position = self.max - 1;
-                    }
-                }
-            }
-            Move::Right(i) => {
-                for _ in 0..i {
-                    self.position += 1;
-                    if self.position == self.max {
-                        self.position = 0;
-                    }
-                    if self.position == 0 {
-                        self.zeroes += 1;
-                    }
-                }
-            }
+        self.position = match *m {
+            Move::Left(i) => (self.position - i).rem_euclid(self.max),
+            Move::Right(i) => (self.position + i).rem_euclid(self.max),
         };
     }
 
     fn count_zeroes(&self, m: &Move) -> i32 {
         let (dist_to_zero, move_dist) = match *m {
-            Move::Left(i) => (self.position, i),
+            Move::Left(i) => (
+                if self.position == 0 {
+                    self.max
+                } else {
+                    self.position
+                },
+                i,
+            ),
             Move::Right(i) => (self.max - self.position, i),
         };
-        let extra_move = if self.position == 0 { 0 } else { 1 };
         if dist_to_zero > move_dist {
             0
         } else {
             let rem = move_dist - dist_to_zero;
-            extra_move + rem / self.max
+            1 + rem / self.max
         }
     }
 }
@@ -80,7 +65,6 @@ pub fn solve(data: String) {
     let mut dial = Dial {
         position: 50,
         max: 100,
-        zeroes: 0,
     };
     let mut zeroes = 0;
     let mut more_zeroes = 0;
@@ -99,7 +83,7 @@ pub fn solve(data: String) {
         );
     }
 
-    dbg!(zeroes, more_zeroes, dial.zeroes);
+    dbg!(zeroes, more_zeroes);
 }
 
 pub fn solve2(data: String) {
