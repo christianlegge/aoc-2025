@@ -61,33 +61,23 @@ fn merge_overlaps(ranges: Vec<RangeInclusive<u64>>) -> Vec<RangeInclusive<u64>> 
         println!("\nstart: {ranges:?}");
         let mut changed = false;
         let mut new_ranges = Vec::new();
-        let mut leftover = None;
 
         let mut iter = ranges.iter().peekable();
-        while let Some(&r) = iter.peek() {
-            println!("folding from {r:?}");
-            new_ranges.push(
-                iter.fold_while(None, |a, v| {
-                    println!("checking {a:?} and {v:?}...");
-                    match &a {
-                        None => itertools::FoldWhile::Continue(Some(v.clone())),
-                        Some(a_inner) => {
-                            if let Some(merged) = expand_range_ordered(a_inner, v) {
-                                println!("merging into {merged:?}");
-                                changed = true;
-                                itertools::FoldWhile::Continue(Some(merged))
-                            } else {
-                                leftover = Some(v);
-                                itertools::FoldWhile::Done(a)
-                            }
-                        }
+        while iter.peek().is_some() {
+            if let Some(cur) = iter.next() {
+                if let Some(&other) = iter.peek() {
+                    println!("checking {cur:?} and {other:?}...");
+                    if let Some(merged) = expand_range_ordered(cur, other) {
+                        println!("merging into {merged:?}");
+                        changed = true;
+                        new_ranges.push(merged);
+                        iter.next();
+                    } else {
+                        new_ranges.push(cur.clone());
                     }
-                })
-                .into_inner()
-                .expect("error folding"),
-            );
-            if let Some(l) = leftover {
-                new_ranges.push(l.clone());
+                } else {
+                    new_ranges.push(cur.clone());
+                }
             }
         }
 
@@ -123,17 +113,17 @@ impl IngredientDb {
 
 #[allow(clippy::unnecessary_wraps)]
 pub fn solve(data: &str) -> Result<(String, String), Error> {
-    let data = r"3-5
-16-20
-12-18
-10-14
-
-1
-5
-8
-11
-17
-32";
+    //     let data = r"3-5
+    // 16-20
+    // 12-18
+    // 10-14
+    //
+    // 1
+    // 5
+    // 8
+    // 11
+    // 17
+    // 32";
     println!("Text input: {data}");
     let db = IngredientDb::from_str(data.trim())?;
     let fresh_available = db
