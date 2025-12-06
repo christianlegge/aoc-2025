@@ -1,7 +1,6 @@
 use std::{collections::HashSet, ops::RangeInclusive, str::FromStr};
 
 use anyhow::Error;
-use itertools::Itertools;
 
 #[derive(Debug)]
 struct IngredientDb {
